@@ -2,9 +2,10 @@ import random, datetime, time
 
 class Temperature_sensor:
     def __init__(self):
-        self.__temperature =  random.randint(10, 30)
+        self.__temperature = 0
 
     def get_temperature(self):
+        self.__temperature = 20 + random.randint(0, 10)/10
         return self.__temperature
     
 class Saver:
@@ -28,13 +29,14 @@ class Logger:
         with open(self.filename, 'w') as file:
             file.write("Time                Temperature\n")
 
-    def log_temperature(self, log_time):
-        for i in range(log_time):
+    def log_temperature(self, log_times):
+        for _ in range(log_times):
             self.shared_data.save_now()
-            last_data = self.shared_data.get_data()[i-1]
+            latest_data = self.shared_data.get_data()[-1]
             with open(self.filename, 'a') as file:
-                file.write(f"{last_data['Time']}                  {last_data['Temperature']}\n")
+                file.write(f"{latest_data['Time']}            {latest_data['Temperature']}\n")
+            self.log_counter += 1
             time.sleep(1)
 
 log = Logger("My_measurements.txt")
-log.log_temperature(5)
+log.log_temperature(10)
