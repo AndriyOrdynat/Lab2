@@ -1,4 +1,4 @@
-import random, datetime, time
+import random, datetime, time, csv
 
 class Temperature_sensor:
     def __init__(self):
@@ -8,35 +8,32 @@ class Temperature_sensor:
         self.__temperature = 20 + random.randint(0, 10)/10
         return self.__temperature
     
-class Saver:
+class Saver (Temperature_sensor):
     def __init__(self):
-        self.__sensor = Temperature_sensor()
+        super().__init__()
         self.data = []
 
     def save_now(self):
-        T = self.__sensor.get_temperature()
+        T = super().get_temperature()
         t = datetime.datetime.now().strftime("%H:%M:%S")
         self.data.append({'Temperature': T, 'Time': t})
 
-    def get_data(self):
-        return self.data
-
-class Logger:
+class Logger (Saver):
     def __init__(self, file_name):
+        super().__init__()
         self.filename = file_name
-        self.shared_data = Saver()
         self.log_counter = 0
-        with open(self.filename, 'w') as file:
-            file.write("Time                Temperature\n")
+        with open(self.filename, 'w', newline='') as file:
+            logfile = csv.writer(file)
+            logfile.writerow(['Time', 'Temperature'])
 
     def log_temperature(self, log_times):
-        for _ in range(log_times):
-            self.shared_data.save_now()
-            latest_data = self.shared_data.get_data()[-1]
-            with open(self.filename, 'a') as file:
-                file.write(f"{latest_data['Time']}            {latest_data['Temperature']}\n")
-            self.log_counter += 1
-            time.sleep(1)
+        with open(self.filename, 'a', newline='') as file:
+            logfile = csv.DictWriter(file, fieldnames=['Time', 'Temperature'])
+            for _ in range(log_times):
+                super().save_now()
+                logfile.writerow(self.data[-1])
+                time.sleep(1)
 
-log = Logger("My_measurements.txt")
-log.log_temperature(10)
+log = Logger("tempLog.csv")
+log.log_temperature(4)
