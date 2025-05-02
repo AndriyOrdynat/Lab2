@@ -1,5 +1,5 @@
 class Employee:
-    def __init__(self, name, surname):
+    def __init__(self, name = 'NoName', surname = 'NoSurname'):
         self.name = name
         self.surname = surname
     
@@ -41,6 +41,8 @@ class Office(Employee):
 
 
 of = Office()
+print(of.name)
+
 a = Employee("Bob", "Robin")
 b = Employee("Mark", "Person")
 c = Employee("Kevin", "Clark")
